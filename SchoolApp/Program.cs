@@ -74,8 +74,6 @@ namespace SchoolApp
                     .AllowAnyHeader());
             });
 
-
-
             builder.Services.AddControllers().AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
@@ -109,6 +107,11 @@ namespace SchoolApp
             builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
             builder.Services.AddProblemDetails();
 
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy("VIEW_USERS", p => p.RequireClaim("capability", "VIEW_USERS"));
+            });
+
             var app = builder.Build();
 
             app.UseExceptionHandler();
@@ -118,6 +121,8 @@ namespace SchoolApp
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
+                //app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "School App v1"));
+                //app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v2/swagger.json", "School App v2"));
             }
 
             app.UseHttpsRedirection();
